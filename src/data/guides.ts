@@ -55,6 +55,9 @@ export interface GuideScenario {
   mode: string;
   /** one-line reason this mode wins here */
   why: string;
+  /** lowercase search tags — powers the Quick Guide search box.
+      First few are shown on the card as clickable chips. */
+  tags: string[];
   shot: GuideShot;
   /** 2–4 practical pro tips */
   tips: string[];
@@ -75,6 +78,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'portrait', cat: 'subject', icon: '🧑', title: 'Portrait', mode: 'Av',
     why: 'Wide open blurs the background — you choose the ƒ-stop and the camera keeps the rest honest.',
+    tags: ['portrait', 'people', 'bokeh', 'background blur', 'shallow dof', '85mm', 'face', 'eye'],
     shot: { f: 1.8, sec: 1 / 200, iso: 100, focal: 85,
             note: 'Evaluative metering · One-Shot AF, centre point on the near eye · Single-Shot drive' },
     tips: [
@@ -88,6 +92,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'group', cat: 'subject', icon: '👥', title: 'Group photo', mode: 'Av',
     why: 'Two rows of faces need depth of field — aperture is the lever that sets it.',
+    tags: ['group', 'people', 'family', 'friends', 'deep dof', '35mm', 'rows'],
     shot: { f: 5.6, sec: 1 / 250, iso: 100, focal: 35,
             note: 'One-Shot AF on the front row · 3-frame bursts · step everyone’s toes onto one line' },
     tips: [
@@ -101,6 +106,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'pet', cat: 'subject', icon: '🐕', title: 'Pet & dog', mode: 'Tv',
     why: 'You set a sprint-freezing shutter and let the aperture follow the light.',
+    tags: ['pet', 'dog', 'animal', 'action', 'freeze motion', '135mm', 'fur', 'run'],
     shot: { f: 2.8, sec: 1 / 1000, iso: 400, focal: 135,
             note: 'AI Servo AF · High-speed continuous · focus point on the eye, not the nose' },
     tips: [
@@ -114,6 +120,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'flower', cat: 'subject', icon: '🌸', title: 'Flower / close-up', mode: 'Av',
     why: 'Aperture is the creative tool here — wide for dreamy, stopped down for detail.',
+    tags: ['flower', 'macro', 'close-up', 'nature', 'detail', 'still life'],
     shot: { f: 2.8, sec: 1 / 500, iso: 100, focal: 85,
             note: 'One-Shot AF · Live View + 10× for critical focus · shield the flower from wind' },
     tips: [
@@ -127,6 +134,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'sports', cat: 'subject', icon: '⚽', title: 'Sports & wildlife', mode: 'Tv',
     why: 'Shutter speed is king; everything else bends around it.',
+    tags: ['sports', 'wildlife', 'action', 'freeze motion', 'telephoto', '200mm', 'panning', 'birds'],
     shot: { f: 4, sec: 1 / 1000, iso: 800, focal: 200,
             note: 'AI Servo AF, Case 2 (ignore obstacles) · High-speed continuous · back-button focus' },
     tips: [
@@ -140,6 +148,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'kids', cat: 'subject', icon: '🧒', title: 'Kids indoors', mode: 'Tv',
     why: 'Weak room light plus non-stop motion: lock a safe shutter and let ISO climb.',
+    tags: ['kids', 'children', 'indoor', 'low light', 'high iso', '50mm', 'window'],
     shot: { f: 2, sec: 1 / 250, iso: 1600, focal: 50,
             note: 'AI Servo AF · ISO Auto capped at 6400 · bounce flash if you have one' },
     tips: [
@@ -155,6 +164,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'landscape', cat: 'place', icon: '🏔️', title: 'Landscape', mode: 'Av',
     why: 'You control depth of field at its sharpest; the camera meters the scene.',
+    tags: ['landscape', 'scenery', 'nature', 'wide angle', '24mm', 'tripod', 'hyperfocal'],
     shot: { f: 8, sec: 1 / 125, iso: 100, focal: 24,
             note: 'Evaluative · tripod + 2 s self-timer · focus a third into the scene' },
     tips: [
@@ -168,6 +178,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'beach', cat: 'place', icon: '🏖️', title: 'Beach & snow', mode: 'Av',
     why: 'Sand and snow fool the meter into grey — Av plus exposure compensation keeps them white.',
+    tags: ['beach', 'snow', 'sand', 'bright', 'sun', 'vacation', 'polariser', 'exposure compensation'],
     shot: { f: 8, sec: 1 / 500, iso: 100, focal: 35,
             note: '+1 to +2 EV compensation · highlight alert ON · polariser for water glare' },
     tips: [
@@ -181,6 +192,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'city-night', cat: 'place', icon: '🌃', title: 'City at night', mode: 'M',
     why: 'Neon and streetlights defeat auto exposure — set it yourself and trust the histogram.',
+    tags: ['city', 'night', 'street', 'neon', 'urban', 'low light', 'handheld', 'light trails'],
     shot: { f: 2.8, sec: 1 / 30, iso: 6400, focal: 35,
             note: 'Evaluative, no comp · brace on a rail or wall · RAW for mixed white balance' },
     tips: [
@@ -194,6 +206,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'forest', cat: 'place', icon: '🌲', title: 'Forest & woodland', mode: 'Av',
     why: 'Pick the aperture for busy backgrounds; keep an eye on the shutter in the shade.',
+    tags: ['forest', 'woodland', 'trees', 'nature', 'shade', 'green', 'moss', 'polariser'],
     shot: { f: 4, sec: 1 / 60, iso: 400, focal: 50,
             note: 'Evaluative · watch for hot spots · polariser kills leaf glare' },
     tips: [
@@ -207,6 +220,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'home-window', cat: 'place', icon: '🪟', title: 'Home & window light', mode: 'Av',
     why: 'One window is a two-metre softbox — aperture sets the look and the camera balances the rest.',
+    tags: ['window light', 'home', 'indoor', 'portrait', 'natural light', 'softbox', '50mm'],
     shot: { f: 2, sec: 1 / 250, iso: 800, focal: 50,
             note: '−0.3 EV or spot meter on the lit cheek · subject at 45° to the glass · One-Shot AF on the near eye' },
     tips: [
@@ -220,6 +234,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'party', cat: 'place', icon: '🎉', title: 'Party / low light', mode: 'Av',
     why: 'Open wide, let ISO float, and trade a little noise for the mood.',
+    tags: ['party', 'low light', 'indoor', 'event', 'celebration', 'flash', 'high iso'],
     shot: { f: 2, sec: 1 / 125, iso: 3200, focal: 35,
             note: 'Evaluative · bounce flash off the ceiling if allowed · bursts of 2–3' },
     tips: [
@@ -233,6 +248,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'concert', cat: 'place', icon: '🎤', title: 'Concert & stage', mode: 'M',
     why: 'Moving spotlights break every auto mode — lock exposure to the performer’s highlights.',
+    tags: ['concert', 'stage', 'music', 'performance', 'spotlight', 'low light', 'no flash', '135mm'],
     shot: { f: 2.8, sec: 1 / 250, iso: 3200, focal: 135,
             note: 'Spot meter on the face · High-speed continuous · no flash (banned anyway)' },
     tips: [
@@ -246,6 +262,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'museum', cat: 'place', icon: '🏛️', title: 'Museums & churches', mode: 'Av',
     why: 'Flash and tripods are banned — Av with floating ISO trades a little grain for a safe shutter.',
+    tags: ['museum', 'church', 'indoor', 'low light', 'architecture', 'no flash', '24mm'],
     shot: { f: 2.8, sec: 1 / 60, iso: 3200, focal: 24,
             note: 'Evaluative · IS on, brace against a pillar · silent shutter where the rules allow' },
     tips: [
@@ -261,6 +278,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'sunset', cat: 'condition', icon: '🌅', title: 'Sunset / golden hour', mode: 'Av',
     why: 'Expose for the sky and the light itself becomes the subject.',
+    tags: ['sunset', 'sunrise', 'golden hour', 'sky', 'silhouette', 'warm', 'evening'],
     shot: { f: 5.6, sec: 1 / 250, iso: 100, focal: 35,
             note: 'Meter off the sky, AE-lock, recompose · RAW · +1.3 EV or fill flash for portraits' },
     tips: [
@@ -274,6 +292,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'candlelight', cat: 'condition', icon: '🕯️', title: 'Candlelight', mode: 'M',
     why: 'A flickering flame is the only light source — Manual locks exposure and keeps the warmth.',
+    tags: ['candlelight', 'candle', 'dinner', 'warm', 'low light', 'indoor', 'mood'],
     shot: { f: 1.8, sec: 1 / 60, iso: 6400, focal: 35,
             note: 'Spot meter on the face, never the flame · shoot RAW · bursts of 2–3 to beat the flicker' },
     tips: [
@@ -287,6 +306,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'waterfall', cat: 'condition', icon: '💦', title: 'Silky waterfalls', mode: 'Tv',
     why: 'Shutter speed is the whole picture: seconds turn falling water to silk.',
+    tags: ['waterfall', 'long exposure', 'motion blur', 'nd filter', 'tripod', 'water', 'silky'],
     shot: { f: 11, sec: 1 / 4, iso: 100, focal: 24,
             note: 'Tripod · ND8–ND1000 filter · 2 s timer · manual focus' },
     tips: [
@@ -300,6 +320,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'fireworks', cat: 'condition', icon: '🎆', title: 'Fireworks', mode: 'B',
     why: 'The sky is black and the meter is blind — hold Bulb open for the burst itself.',
+    tags: ['fireworks', 'bulb', 'long exposure', 'tripod', 'night', 'sky', 'celebration'],
     shot: { f: 8, sec: 4, iso: 100, focal: 24,
             note: 'Bulb + remote release · tripod · manual focus pre-set to ∞' },
     tips: [
@@ -313,6 +334,7 @@ export const SCENARIOS: GuideScenario[] = [
   {
     id: 'stars', cat: 'condition', icon: '✨', title: 'Starry sky', mode: 'M',
     why: 'The night sky has one fixed recipe — Manual just holds it.',
+    tags: ['stars', 'astro', 'milky way', 'night', 'long exposure', 'tripod', '500 rule', '16mm'],
     shot: { f: 2, sec: 15, iso: 3200, focal: 16,
             note: 'Manual focus at ∞ via Live View 10× · 2 s timer · RAW' },
     tips: [

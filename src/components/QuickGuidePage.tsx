@@ -1,9 +1,12 @@
 /* Quick Guide page — pick what matters most (subject, place, condition)
-   and get the best-fit Canon mode + settings for it. Cards with a
-   faithful scene in the simulator get a "Try in simulator" button that
-   applies a tuned mapping (snapped to the nearest simulated dial) and
-   jumps to the Simulator tab. */
-import { useState } from 'react';
+   and get the best-fit Canon mode + settings for it. The search box
+   filters cards by the tags each scenario defines (title and mode count
+   too — so "aperture" finds every Av card). Tags on the cards are
+   clickable search shortcuts. Cards with a faithful scene in the
+   simulator get a "Try in simulator" button that applies a tuned
+   mapping (snapped to the nearest simulated dial) and jumps to the
+   Simulator tab. */
+import { useEffect, useRef, useState } from 'react';
 import { APS, ISOS, SHUTTERS } from '../optics';
 import { useSim } from '../store';
 import { CATEGORIES, SCENARIOS } from '../data/guides';
@@ -46,7 +49,21 @@ function applySim(sim: GuideSim) {
   useSim.getState().setView('sim');
 }
 
-function ScenarioCard({ s }: { s: GuideScenario }) {
+/** Does a scenario match the search? Every whitespace-separated term
+    must hit somewhere in the title, the mode (short or long name) or
+    one of the tags — so "night tripod" finds night + tripod cards. */
+function matchesSearch(s: GuideScenario, terms: string[]) {
+  if (terms.length === 0) return true;
+  const hay = [s.title, s.mode, MODE_NAMES[s.mode] ?? '', ...s.tags]
+    .join(' ')
+    .toLowerCase();
+  return terms.every(t => hay.includes(t));
+}
+
+/** Tags shown as clickable chips on a card (the rest stay searchable). */
+const CHIP_TAGS = 5;
+
+function ScenarioCard({ s, onTag }: { s: GuideScenario; onTag: (tag: string) => void }) {
   const sim = s.sim;
   return (
     <article className="card guide-card">
@@ -72,6 +89,14 @@ function ScenarioCard({ s }: { s: GuideScenario }) {
         {s.tips.map(t => <li key={t}>{t}</li>)}
       </ul>
 
+      <div className="guide-tags">
+        {s.tags.slice(0, CHIP_TAGS).map(t => (
+          <button key={t} className="guide-tag" title={`Search “${t}”`} onClick={() => onTag(t)}>
+            #{t}
+          </button>
+        ))}
+      </div>
+
       {sim ? (
         <button className="guide-try" onClick={() => applySim(sim)}>Try in simulator →</button>
       ) : (
@@ -83,7 +108,44 @@ function ScenarioCard({ s }: { s: GuideScenario }) {
 
 export default function QuickGuidePage() {
   const [cat, setCat] = useState<GuideCatId | 'all'>('all');
-  const countFor = (id: GuideCatId) => SCENARIOS.filter(s => s.cat === id).length;
+  const [q, setQ] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  /* "/" anywhere on the page jumps into the search box */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      e.preventDefault();
+      searchRef.current?.focus();
+      searchRef.current?.select();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const terms = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const searchCount = SCENARIOS.filter(s => matchesSearch(s, terms)).length;
+  const countFor = (id: GuideCatId) =>
+    SCENARIOS.filter(s => s.cat === id && matchesSearch(s, terms)).length;
+
+  /* category groups that survive both filters, empties dropped */
+  const groups = CATEGORIES
+    .filter(c => cat === 'all' || c.id === cat)
+    .map(c => ({ c, items: SCENARIOS.filter(s => s.cat === c.id && matchesSearch(s, terms)) }))
+    .filter(g => g.items.length > 0);
+
+  /** Clicking a tag searches it across every category. */
+  const searchTag = (tag: string) => {
+    setCat('all');
+    setQ(tag);
+  };
+
+  const resetAll = () => {
+    setQ('');
+    setCat('all');
+  };
 
   return (
     <div className="page">
@@ -105,7 +167,7 @@ export default function QuickGuidePage() {
           aria-pressed={cat === 'all'}
           onClick={() => setCat('all')}
         >
-          All <b>{SCENARIOS.length}</b>
+          All <b>{searchCount}</b>
         </button>
         {CATEGORIES.map(c => (
           <button
@@ -117,21 +179,52 @@ export default function QuickGuidePage() {
             {c.label} <b>{countFor(c.id)}</b>
           </button>
         ))}
+
+        <div className="guide-search" role="search">
+          <span className="guide-search-icon" aria-hidden>🔍</span>
+          <input
+            ref={searchRef}
+            type="text"
+            value={q}
+            onChange={e => setQ(e.target.value)}
+            placeholder={`Search ${SCENARIOS.length} cards by tag — “night”, “bokeh”, “tripod”…`}
+            aria-label="Search guide cards by tag"
+            spellCheck={false}
+          />
+          {q && (
+            <button className="guide-search-clear" onClick={() => setQ('')} aria-label="Clear search">
+              ✕
+            </button>
+          )}
+        </div>
       </div>
 
-      {CATEGORIES.filter(c => cat === 'all' || c.id === cat).map(c => (
+      {groups.map(({ c, items }) => (
         <section key={c.id} className="guide-group">
           <div className="guide-group-head">
             <h3>{c.label}</h3>
             <p>{c.blurb}</p>
           </div>
           <div className="guide-grid">
-            {SCENARIOS.filter(s => s.cat === c.id).map(s => (
-              <ScenarioCard key={s.id} s={s} />
+            {items.map(s => (
+              <ScenarioCard key={s.id} s={s} onTag={searchTag} />
             ))}
           </div>
         </section>
       ))}
+
+      {groups.length === 0 && (
+        <div className="card guide-empty">
+          <p>
+            No cards match <b>{q.trim() || '…'}</b>
+            {cat !== 'all' ? ' in this category' : ''}. Try a broader tag — “night”, “low
+            light”, “tripod” — or clear the search to browse again.
+          </p>
+          <button className="guide-empty-btn" onClick={resetAll}>
+            Clear search &amp; filters
+          </button>
+        </div>
+      )}
     </div>
   );
 }
