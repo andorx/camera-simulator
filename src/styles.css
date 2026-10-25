@@ -120,6 +120,7 @@ body {
 .shutter-btn {
   position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
   width: 46px; height: 46px; border-radius: 50%;
+  padding: 0;
   background: rgba(8,10,15,.55);
   border: 3px solid var(--accent);
   cursor: pointer; z-index: 4;
@@ -129,7 +130,8 @@ body {
 }
 .shutter-btn span { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); transition: transform .08s ease; }
 .shutter-btn:hover span { background: #ffc477; }
-.shutter-btn:active, .shutter-btn:active span { transform: scale(.9); }
+.shutter-btn:active { transform: translateX(-50%) scale(.9); }
+.shutter-btn:active span { transform: scale(.9); }
 
 .capture-flash {
   position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 5;
