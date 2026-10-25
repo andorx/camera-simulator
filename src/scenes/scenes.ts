@@ -23,92 +23,71 @@ export function subjectGeometry(hM: number, d: number) {
 /* ========================== SUBJECTS ================================ */
 
 /* ------------------------------ dog (0.6 m) ------------------------- */
-/* Front-facing sitting golden retriever. 1 unit = 1 cm, y 0…60.       */
-function paintDog(g: CanvasRenderingContext2D, _T: Theme, d: number) {
+/* Front-facing sitting shiba inu — simple flat shapes + line work.    */
+/* 1 unit = 1 cm, y 0…60.                                              */
+function paintShiba(g: CanvasRenderingContext2D, _T: Theme, d: number) {
   const { h, baseY } = subjectGeometry(0.6, d);
   const u = h / 60;
   g.save(); g.translate(800, baseY); g.scale(u, u); g.translate(0, -60);
 
-  const FUR = '#c9904e', FUR_D = '#8a5a2e', CREAM = '#ecd8b0', NOSE = '#2a2420';
+  const FUR = '#e09a54', FUR_D = '#c07b3c', CREAM = '#f7efe0', INK = '#33251b';
 
   ell(g, 0, 59, 20, 3.2, 'rgba(0,0,0,.25)');
 
-  // tail — curled up along the right haunch
-  g.strokeStyle = FUR; g.lineWidth = 5; g.lineCap = 'round';
-  g.beginPath(); g.moveTo(13, 46); g.quadraticCurveTo(24, 42, 23, 29); g.stroke();
-  g.strokeStyle = CREAM; g.lineWidth = 3.4;
-  g.beginPath(); g.moveTo(22.6, 34); g.quadraticCurveTo(23, 31, 23, 29); g.stroke();
+  // curled tail — one orange loop with a cream core, peeking past the flank
+  g.lineCap = 'round';
+  g.strokeStyle = FUR_D; g.lineWidth = 5.2;
+  g.beginPath(); g.arc(17, 32, 6.2, Math.PI * 0.75, Math.PI * 2.55); g.stroke();
+  g.strokeStyle = CREAM; g.lineWidth = 2.4;
+  g.beginPath(); g.arc(17, 32, 3.6, Math.PI * 1.05, Math.PI * 2.3); g.stroke();
 
   // haunches + body
   ell(g, -11, 42, 7.5, 9.5, FUR);
   ell(g, 11, 42, 7.5, 9.5, FUR);
   ell(g, 0, 40, 14.5, 11, FUR);
-  ell(g, 0, 45, 7.5, 8.5, CREAM); // chest
+  ell(g, 0, 45, 7.5, 8.5, CREAM); // chest urajiro
 
-  // front legs
+  // front legs — plain columns with cream paws
   for (const lx of [-8.5, 3]) {
     g.fillStyle = FUR;
     g.beginPath(); g.roundRect(lx, 38, 5.5, 19, 2.5); g.fill();
     g.fillStyle = CREAM;
     g.beginPath(); g.roundRect(lx - 0.5, 53.5, 6.5, 4.5, 2); g.fill();
-    g.strokeStyle = 'rgba(0,0,0,.25)'; g.lineWidth = 0.6;
-    g.beginPath(); g.moveTo(lx + 1.7, 57); g.lineTo(lx + 1.7, 55.4); g.stroke();
-    g.beginPath(); g.moveTo(lx + 3.9, 57); g.lineTo(lx + 3.9, 55.4); g.stroke();
-  }
-
-  // fur texture on body
-  g.strokeStyle = 'rgba(90,55,20,.35)'; g.lineWidth = 0.7;
-  for (const [fx, fy] of [[-12, 38], [-9, 34], [10, 36], [12, 40], [0, 50], [-4, 48]]) {
-    g.beginPath(); g.moveTo(fx, fy); g.quadraticCurveTo(fx + 2, fy + 1.5, fx + 4, fy + 0.5); g.stroke();
   }
 
   // head
   ell(g, 0, 13.5, 11.5, 10.5, FUR);
-  ell(g, 0, 7.5, 6.5, 4, CREAM); // forehead blaze
 
-  // ears (erect triangles)
+  // ears — upright triangles with cream lining
   poly(g, [[-10.5, 6], [-14, -4], [-4.5, 5]], FUR_D);
   poly(g, [[10.5, 6], [14, -4], [4.5, 5]], FUR_D);
-  poly(g, [[-10.5, 5], [-12.6, -1.4], [-6.5, 4.4]], '#d99c96');
-  poly(g, [[10.5, 5], [12.6, -1.4], [6.5, 4.4]], '#d99c96');
+  poly(g, [[-10, 5], [-12, -1], [-6.6, 4.2]], CREAM);
+  poly(g, [[10, 5], [12, -1], [6.6, 4.2]], CREAM);
 
-  // eyebrow spots
-  ell(g, -4.6, 9.2, 1.6, 1.1, CREAM);
-  ell(g, 4.6, 9.2, 1.6, 1.1, CREAM);
+  // urajiro — cream cheeks + muzzle
+  ell(g, -5, 16.5, 3.6, 4.6, CREAM);
+  ell(g, 5, 16.5, 3.6, 4.6, CREAM);
+  ell(g, 0, 18.5, 6.2, 4.8, CREAM);
 
-  // eyes
+  // eyes — two ink almonds, one catchlight each
   for (const ex of [-4.6, 4.6]) {
-    ell(g, ex, 12.4, 1.9, 1.8, '#fff');
-    ell(g, ex, 12.5, 1.5, 1.5, '#7a4f1e');
-    ell(g, ex, 12.5, 0.75, 0.75, '#1d140c');
-    ell(g, ex - 0.5, 11.9, 0.45, 0.45, '#fff');
-    g.strokeStyle = 'rgba(50,32,14,.8)'; g.lineWidth = 0.7;
-    g.beginPath(); g.moveTo(ex - 1.8, 11.1); g.quadraticCurveTo(ex, 10.4, ex + 1.8, 11.1); g.stroke();
+    ell(g, ex, 12.3, 1.3, 1.7, INK);
+    ell(g, ex - 0.4, 11.7, 0.4, 0.4, '#fff');
   }
 
-  // muzzle
-  ell(g, 0, 18.5, 6.6, 5.2, CREAM);
   // nose
-  g.fillStyle = NOSE;
-  g.beginPath(); g.ellipse(0, 15.8, 2.6, 2, 0, Math.PI, 0); g.fill();
-  g.fillRect(-2.6, 15.8, 5.2, 1);
-  ell(g, -0.9, 15.1, 0.6, 0.45, 'rgba(255,255,255,.5)');
-  // mouth
-  g.strokeStyle = 'rgba(60,40,25,.7)'; g.lineWidth = 0.8;
-  g.beginPath(); g.moveTo(0, 17); g.lineTo(0, 18.6);
-  g.moveTo(0, 18.6); g.quadraticCurveTo(-2.4, 20.4, -4.4, 18.8);
-  g.moveTo(0, 18.6); g.quadraticCurveTo(2.4, 20.4, 4.4, 18.8);
-  g.stroke();
-  // tongue
-  g.fillStyle = '#e8756f';
-  g.beginPath(); g.roundRect(-1.7, 19.6, 3.4, 4.2, 1.7); g.fill();
-  g.strokeStyle = 'rgba(160,60,60,.6)'; g.lineWidth = 0.5;
-  g.beginPath(); g.moveTo(0, 20.4); g.lineTo(0, 22.6); g.stroke();
-  // whisker dots
-  g.fillStyle = 'rgba(60,40,25,.5)';
-  for (const [wx, wy] of [[-4.5, 17.5], [-5.3, 18.6], [4.5, 17.5], [5.3, 18.6]]) g.fillRect(wx, wy, 0.5, 0.5);
+  g.fillStyle = INK;
+  g.beginPath(); g.ellipse(0, 15.8, 2.2, 1.7, 0, Math.PI, 0); g.fill();
 
-  // collar
+  // the shiba smile — one stroke
+  g.strokeStyle = INK; g.lineWidth = 0.9;
+  g.beginPath();
+  g.moveTo(0, 16.8); g.lineTo(0, 18.4);
+  g.moveTo(0, 18.4); g.quadraticCurveTo(-2.2, 20.2, -4.2, 18.6);
+  g.moveTo(0, 18.4); g.quadraticCurveTo(2.2, 20.2, 4.2, 18.6);
+  g.stroke();
+
+  // collar + tag
   g.strokeStyle = '#c0392b'; g.lineWidth = 2.6;
   g.beginPath(); g.ellipse(0, 22.6, 10.2, 3, 0, 0.15, Math.PI - 0.15); g.stroke();
   ell(g, 0, 25.6, 1.9, 2.1, '#f1c40f');
@@ -306,7 +285,7 @@ function paintFlower(g: CanvasRenderingContext2D, _T: Theme, d: number) {
 }
 
 export const SUBJECTS: Record<'dog' | 'car' | 'flower', SubjectDef> = {
-  dog:    { h: 0.6,  minDist: 1,   paint: paintDog },
+  dog:    { h: 0.6,  minDist: 1,   paint: paintShiba },
   car:    { h: 1.45, minDist: 4, suggestDist: 7, paint: paintCar },
   flower: { h: 1.1,  minDist: 1.2, paint: paintFlower },
 };

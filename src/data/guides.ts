@@ -205,6 +205,19 @@ export const SCENARIOS: GuideScenario[] = [
     sim: { f: 4, sec: 1 / 400, iso: 400, focal: 50, dist: 5, theme: 'overcast', subject: 'person', background: 'forest' },
   },
   {
+    id: 'home-window', cat: 'place', icon: '🪟', title: 'Home & window light', mode: 'Av',
+    why: 'One window is a two-metre softbox — aperture sets the look and the camera balances the rest.',
+    shot: { f: 2, sec: 1 / 250, iso: 800, focal: 50,
+            note: '−0.3 EV or spot meter on the lit cheek · subject at 45° to the glass · One-Shot AF on the near eye' },
+    tips: [
+      'Side-on windows sculpt; a white curtain turns a harsh sunbeam into softbox light.',
+      'Turn the face towards the glass until both eyes catch a highlight — that is your free catchlight.',
+      'The meter sees a dark room and brightens the face: −0.3 to −0.7 EV keeps skin from blowing.',
+      'Overhead lights off — tungsten plus daylight is a white-balance fight nobody wins.',
+    ],
+    sim: { f: 2, sec: 1 / 3200, iso: 800, focal: 50, dist: 2.5, theme: 'overcast', subject: 'person', background: 'meadow' },
+  },
+  {
     id: 'party', cat: 'place', icon: '🎉', title: 'Party / low light', mode: 'Av',
     why: 'Open wide, let ISO float, and trade a little noise for the mood.',
     shot: { f: 2, sec: 1 / 125, iso: 3200, focal: 35,
@@ -230,6 +243,19 @@ export const SCENARIOS: GuideScenario[] = [
     ],
     sim: { f: 2, sec: 1 / 60, iso: 12800, focal: 85, dist: 8, theme: 'night', subject: 'person', background: 'city' },
   },
+  {
+    id: 'museum', cat: 'place', icon: '🏛️', title: 'Museums & churches', mode: 'Av',
+    why: 'Flash and tripods are banned — Av with floating ISO trades a little grain for a safe shutter.',
+    shot: { f: 2.8, sec: 1 / 60, iso: 3200, focal: 24,
+            note: 'Evaluative · IS on, brace against a pillar · silent shutter where the rules allow' },
+    tips: [
+      '1/60 s is the handheld floor at 24 mm; IS buys 2–3 more stops for stills, zero for moving people.',
+      'Open the aperture only after ISO is already high — lens corners go soft long before sensors do.',
+      'Spotlit altars and stained glass: meter the brights and let the nave fall dark and moody.',
+      'Handheld bracketing (±2 EV) merges into clean HDR later — a tripod is not the only answer.',
+    ],
+    sim: { f: 2.8, sec: 1 / 8, iso: 3200, focal: 24, dist: 8, theme: 'night', subject: 'person', background: 'city' },
+  },
 
   /* ------------------------ CONDITION ------------------------ */
   {
@@ -244,6 +270,19 @@ export const SCENARIOS: GuideScenario[] = [
       'Portraits into the sun need +1.3 EV or fill flash, or faces go black.',
     ],
     sim: { f: 5.6, sec: 1 / 250, iso: 100, focal: 35, dist: 6, theme: 'golden', subject: 'person', background: 'beach' },
+  },
+  {
+    id: 'candlelight', cat: 'condition', icon: '🕯️', title: 'Candlelight', mode: 'M',
+    why: 'A flickering flame is the only light source — Manual locks exposure and keeps the warmth.',
+    shot: { f: 1.8, sec: 1 / 60, iso: 6400, focal: 35,
+            note: 'Spot meter on the face, never the flame · shoot RAW · bursts of 2–3 to beat the flicker' },
+    tips: [
+      'Expose for faces and let flames bloom — a clipped candle looks natural, a crushed face does not.',
+      'ISO 6400 is the entry ticket, not a failure — grain is part of the candlelight look.',
+      'Kill the mixed light: overheads off, or the white-balance fight ruins the warmth you came for.',
+      'Elbows on the table turn 1/60 s from risky to routine at 35 mm.',
+    ],
+    sim: { f: 2, sec: 1 / 30, iso: 6400, focal: 35, dist: 2, theme: 'night', subject: 'person', background: 'city' },
   },
   {
     id: 'waterfall', cat: 'condition', icon: '💦', title: 'Silky waterfalls', mode: 'Tv',

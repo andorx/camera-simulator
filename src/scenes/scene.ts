@@ -429,18 +429,18 @@ export function paintSubject(g: CanvasRenderingContext2D, _T: Theme, d: number) 
   g.save();
   g.beginPath();
   g.moveTo(-15, 138); g.quadraticCurveTo(-17.5, 108, -16, 96);
-  g.quadraticCurveTo(-9, 88, -6.5, 80);
-  g.lineTo(6.5, 80); g.quadraticCurveTo(9, 88, 16, 96);
+  g.quadraticCurveTo(-9, 86, -6.5, 74);
+  g.lineTo(6.5, 74); g.quadraticCurveTo(9, 86, 16, 96);
   g.quadraticCurveTo(17.5, 108, 15, 138);
   g.closePath();
   g.fillStyle = '#f4f1e6'; g.fill();
   g.clip();
   g.fillStyle = '#2e8f83';
-  for (let y = 82; y < 140; y += 9) g.fillRect(-20, y, 40, 3.6);
+  for (let y = 76; y < 140; y += 9) g.fillRect(-20, y, 40, 3.6);
   g.restore();
   // collar
   g.strokeStyle = '#d8d3c2'; g.lineWidth = 1.8;
-  g.beginPath(); g.moveTo(-6.5, 80); g.quadraticCurveTo(0, 85, 6.5, 80); g.stroke();
+  g.beginPath(); g.moveTo(-6.5, 74); g.quadraticCurveTo(0, 79, 6.5, 74); g.stroke();
 
   // left arm (down) + watch
   g.strokeStyle = SKIN; g.lineWidth = 5.6; g.lineCap = 'round';
@@ -463,8 +463,9 @@ export function paintSubject(g: CanvasRenderingContext2D, _T: Theme, d: number) 
   g.beginPath(); g.moveTo(9, 110); g.quadraticCurveTo(7.6, 107, 9.4, 104.6); g.stroke();
   g.beginPath(); g.moveTo(12, 110); g.quadraticCurveTo(13.6, 107.4, 12, 105); g.stroke();
 
-  // neck
-  g.fillStyle = SKIN; g.fillRect(-3.6, 66, 7.2, 8);
+  // neck — spans y 63→74: tucks under the chin (head drawn after, covers the top)
+  // and meets the tee's straight neckline at y=74 (drawn earlier, so stop exactly there)
+  g.fillStyle = SKIN; g.fillRect(-3.6, 63, 7.2, 11);
   g.fillStyle = SKIN_SH; g.fillRect(-3.6, 66, 7.2, 2.4);
 
   // head
