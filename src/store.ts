@@ -6,7 +6,7 @@
    ===================================================================== */
 
 import { create } from 'zustand';
-import type { BackgroundKey, Shot, SubjectKey, ThemeKey } from './types';
+import type { BackgroundKey, Shot, SubjectKey, ThemeKey, ViewKey } from './types';
 import { SUBJECT_DEFS } from './scenes/registry';
 import { distToSlider } from './optics';
 
@@ -28,6 +28,9 @@ export const PRESETS: Record<string, Preset & { label: string }> = {
 };
 
 export interface SimState {
+  /* active top-level view (tab) */
+  view: ViewKey;
+
   /* dial targets (indices into APS/ISOS/SHUTTERS where applicable) */
   focal: number;
   ap: number;
@@ -45,6 +48,7 @@ export interface SimState {
   openShot: number | null;
 
   /* actions */
+  setView: (v: ViewKey) => void;
   setFocal: (v: number) => void;
   setAp: (v: number) => void;
   setIso: (v: number) => void;
@@ -62,6 +66,7 @@ export interface SimState {
 }
 
 export const useSim = create<SimState>()((set) => ({
+  view: 'sim',
   focal: 50, ap: 4, iso: 0, sh: 5, dist: 3,
   theme: 'golden', grid: false, hud: true,
   subject: 'person', background: 'meadow',
@@ -69,6 +74,7 @@ export const useSim = create<SimState>()((set) => ({
   shots: [],
   openShot: null,
 
+  setView: (v) => set({ view: v }),
   setFocal: (v) => set({ focal: v }),
   setAp: (v) => set({ ap: v }),
   setIso: (v) => set({ iso: v }),

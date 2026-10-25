@@ -1,0 +1,104 @@
+/* =====================================================================
+   guide.css — Quick Guide page styles. Everything new is prefixed
+   `guide-`; globals from styles.css (.page, .page-hero, .card, .tips)
+   are reused as-is.
+   ===================================================================== */
+
+/* ---------- category filter ---------- */
+.guide-filter { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.guide-filter-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .12em; color: var(--muted); margin-right: 2px;
+}
+.guide-fbtn {
+  font: 600 12px/1 inherit;
+  letter-spacing: .02em;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: color .12s ease, border-color .12s ease, background .12s ease;
+}
+.guide-fbtn:hover { color: var(--text); border-color: #3a4252; }
+.guide-fbtn.active { color: var(--accent); border-color: rgba(255,180,84,.55); background: rgba(255,180,84,.08); }
+.guide-fbtn b { font: 700 10px/1 var(--mono); opacity: .65; margin-left: 6px; }
+
+/* ---------- group sections ---------- */
+.guide-group { display: flex; flex-direction: column; gap: 12px; }
+.guide-group-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; padding: 4px 2px 0; }
+.guide-group-head h3 {
+  margin: 0; font-size: 11.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .12em; color: var(--text);
+}
+.guide-group-head p { margin: 0; font-size: 12.5px; color: var(--muted); }
+
+/* ---------- card grid ---------- */
+.guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
+/* undo the stacked-card margin from styles.css inside the grid */
+.guide-grid > .card,
+.guide-grid > .card + .card { margin-top: 0; }
+
+.guide-card { display: flex; flex-direction: column; gap: 11px; }
+
+.guide-card-head { display: flex; align-items: flex-start; gap: 10px; }
+.guide-icon { flex: none; font-size: 21px; line-height: 1.3; }
+.guide-title { flex: 1; min-width: 0; }
+.guide-title h3 { margin: 0; font-size: 15px; letter-spacing: .2px; }
+.guide-title p { margin: 3px 0 0; font-size: 12px; line-height: 1.45; color: var(--muted); }
+
+/* mode badge — colour per mode family */
+.guide-mode {
+  flex: none;
+  font: 700 12.5px/1 var(--mono);
+  letter-spacing: .05em;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--panel);
+}
+.guide-mode.mode-av { color: var(--accent); border-color: rgba(255,180,84,.5); background: rgba(255,180,84,.07); }
+.guide-mode.mode-tv { color: #8fa7d8; border-color: rgba(143,167,216,.45); background: rgba(143,167,216,.07); }
+.guide-mode.mode-m  { color: var(--good); border-color: rgba(111,208,140,.45); background: rgba(111,208,140,.07); }
+.guide-mode.mode-b  { color: var(--warn); border-color: rgba(255,209,102,.45); background: rgba(255,209,102,.07); }
+
+/* ---------- settings chips ---------- */
+.guide-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.guide-chip {
+  display: inline-flex; align-items: baseline; gap: 6px;
+  font: 600 12.5px/1 var(--mono);
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 9px;
+}
+.guide-chip i {
+  font-style: normal; font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .09em; color: #59617a;
+}
+
+.guide-note { margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+.guide-note::before { content: "⚙ "; color: #59617a; }
+
+.guide-card .tips { margin: 0; }
+
+/* ---------- actions ---------- */
+.guide-try {
+  margin-top: auto;
+  align-self: flex-start;
+  font: 600 11.5px/1 var(--mono);
+  letter-spacing: .03em;
+  color: var(--accent);
+  background: rgba(255,180,84,.08);
+  border: 1px solid rgba(255,180,84,.45);
+  border-radius: 999px;
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: color .12s ease, background .12s ease, border-color .12s ease;
+}
+.guide-try:hover { color: #ffc477; background: rgba(255,180,84,.15); border-color: var(--accent); }
+
+.guide-nosim { margin-top: auto; padding-top: 4px; font-size: 11px; font-style: italic; color: #5d6478; }

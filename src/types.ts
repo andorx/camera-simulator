@@ -4,6 +4,9 @@ export type ThemeKey = 'golden' | 'overcast' | 'night';
 export type SubjectKey = 'person' | 'dog' | 'car' | 'flower';
 export type BackgroundKey = 'meadow' | 'beach' | 'city' | 'forest';
 
+/* Top-level navigation views. */
+export type ViewKey = 'sim' | 'modes' | 'guide';
+
 /** A lighting theme — every painter re-renders the whole scene from this. */
 export interface Theme {
   key: ThemeKey;

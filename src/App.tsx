@@ -1,4 +1,6 @@
+import { useSim } from './store';
 import Header from './components/Header';
+import TabBar from './components/TabBar';
 import Viewport from './components/Viewport';
 import FilmStrip from './components/FilmStrip';
 import ScenePicker from './components/ScenePicker';
@@ -8,30 +10,42 @@ import ControlsCard from './components/ControlsCard';
 import ShotIntelligence from './components/ShotIntelligence';
 import Explainers from './components/Explainers';
 import CaptureModal from './components/CaptureModal';
+import CameraModesPage from './components/CameraModesPage';
+import QuickGuidePage from './components/QuickGuidePage';
 
 export default function App() {
+  const view = useSim(s => s.view);
+
   return (
     <>
       <Header />
+      <TabBar />
 
-      <main className="layout">
-        {/* ======================= PREVIEW ======================= */}
-        <section className="stage">
-          <Viewport />
-          <FilmStrip />
-        </section>
+      {view === 'sim' && (
+        <>
+          <main className="layout">
+            {/* ======================= PREVIEW ======================= */}
+            <section className="stage">
+              <Viewport />
+              <FilmStrip />
+            </section>
 
-        {/* ======================= CONTROLS ======================= */}
-        <aside className="panel">
-          <ScenePicker />
-          <ThemePresets />
-          <ExpoMeter />
-          <ControlsCard />
-          <ShotIntelligence />
-        </aside>
-      </main>
+            {/* ======================= CONTROLS ======================= */}
+            <aside className="panel">
+              <ScenePicker />
+              <ThemePresets />
+              <ExpoMeter />
+              <ControlsCard />
+              <ShotIntelligence />
+            </aside>
+          </main>
 
-      <Explainers />
+          <Explainers />
+        </>
+      )}
+
+      {view === 'modes' && <CameraModesPage />}
+      {view === 'guide' && <QuickGuidePage />}
 
       <footer>
         Simulated optics: 36×24 mm sensor · CoC 0.03 mm · focus locked on the subject · everything rendered live from the math.
