@@ -59,6 +59,15 @@
   border-radius: var(--radius);
   padding: 15px 16px;
 }
+.mode-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.mode-section-head .mode-section-title { margin: 0; }
 .mode-section-title {
   font: 600 11.5px/1 inherit;
   text-transform: uppercase;
@@ -67,12 +76,95 @@
   margin: 0 0 12px;
 }
 
-/* ---------- mode cards ---------- */
+/* display-mode switch: card grid vs tabs */
+.mode-view-toggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(255, 255, 255, .02);
+  border: 1px solid #20242f;
+  border-radius: 9px;
+}
+.mode-view-toggle button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 600 11px/1 inherit;
+  letter-spacing: .03em;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: color .15s ease, background .15s ease;
+}
+.mode-view-toggle button:hover { color: var(--text); }
+.mode-view-toggle button.active {
+  color: var(--accent);
+  background: rgba(255, 180, 84, .09);
+}
+.mode-view-toggle button svg { flex: none; }
+
+/* ---------- mode cards (grid display) ---------- */
 .mode-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
+
+/* ---------- mode tabs (creative core) ---------- */
+.mode-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.mode-tablist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px;
+  background: rgba(255, 255, 255, .02);
+  border: 1px solid #20242f;
+  border-radius: 11px;
+}
+.mode-tab {
+  flex: 1 1 92px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 9px 8px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+.mode-tab-dial {
+  font: 700 14px/1 var(--mono);
+  color: var(--muted);
+  transition: color .15s ease;
+}
+.mode-tab-name {
+  font-size: 9.5px;
+  line-height: 1.35;
+  letter-spacing: .02em;
+  text-align: center;
+  color: #59617a;
+  transition: color .15s ease;
+}
+.mode-tab:hover { background: rgba(255, 255, 255, .03); }
+.mode-tab:hover .mode-tab-dial { color: var(--text); }
+.mode-tab.active {
+  background: rgba(255, 180, 84, .07);
+  border-color: rgba(255, 180, 84, .35);
+}
+.mode-tab.active .mode-tab-dial { color: var(--accent); }
+.mode-tab.active .mode-tab-name { color: #c6cdda; }
+.mode-tabpanel { min-width: 0; }
+
+/* ---------- a single mode card (grid cell or tab panel contents) ---------- */
 .mode-card {
   display: flex;
   flex-direction: column;
@@ -269,6 +361,33 @@
   .mode-step:not(:last-child)::after { display: none; }
 }
 @media (max-width: 640px) {
+  /* small screens: tab navigation becomes a vertical rail on the LEFT,
+     the active mode's card sits beside it */
+  .mode-tabs { flex-direction: row; align-items: flex-start; gap: 10px; }
+  .mode-tablist {
+    position: sticky;
+    top: 12px;
+    flex: none;
+    width: 124px;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-self: flex-start;
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .mode-tab {
+    flex: none;
+    width: 100%;
+    align-items: flex-start;
+    padding: 8px 9px;
+    text-align: left;
+  }
+  .mode-tab-dial { font-size: 13px; }
+  .mode-tab-name { text-align: left; }
+  .mode-tabpanel { flex: 1 1 0; }
+
   .mode-cols { grid-template-columns: 1fr; }
   .mode-brands { grid-template-columns: 1fr; }
 }

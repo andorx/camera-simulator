@@ -1,9 +1,12 @@
 /* Camera Modes page — explains what each mode dial position (A+, P, Tv, Av, M,
    B, Fv, C1–C3, SCN) does on a Canon camera. All content lives in
    src/data/modes.ts; this file only renders it. */
+import { useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import '../modes.css';
+import { useSim } from '../store';
 import { CAMERA_MODES, CREATIVE_LADDER, SCENE_GROUPS } from '../data/modes';
 import type { CameraMode, ModeControls, ParamOwner } from '../data/modes';
+import type { ModesDisplay } from '../types';
 
 const OWNER_LABEL: Record<ParamOwner, string> = {
   you: 'You',
@@ -78,6 +81,95 @@ function OwnerCells({ controls }: { controls: ModeControls }) {
   );
 }
 
+/* Tabbed browser for the main modes — one mode visible at a time.
+   Arrow keys (all four directions, so the vertical small-screen rail
+   works too), Home and End move between tabs. */
+function ModeTabs({ activeId, onSelect }: { activeId: string; onSelect: (id: string) => void }) {
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    const i = CAMERA_MODES.findIndex(m => m.id === activeId);
+    let next = i;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (i + 1) % CAMERA_MODES.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (i - 1 + CAMERA_MODES.length) % CAMERA_MODES.length;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = CAMERA_MODES.length - 1;
+    else return;
+    e.preventDefault();
+    const mode = CAMERA_MODES[next];
+    onSelect(mode.id);
+    tabRefs.current[next]?.focus();
+  };
+
+  return (
+    <div className="mode-tablist" role="tablist" aria-label="Camera modes" onKeyDown={onKeyDown}>
+      {CAMERA_MODES.map((mode, i) => (
+        <button
+          key={mode.id}
+          ref={el => { tabRefs.current[i] = el; }}
+          id={`mode-tab-${mode.id}`}
+          role="tab"
+          aria-selected={mode.id === activeId}
+          aria-controls="mode-panel"
+          tabIndex={mode.id === activeId ? 0 : -1}
+          className={`mode-tab ${mode.id === activeId ? 'active' : ''}`}
+          onClick={() => onSelect(mode.id)}
+        >
+          <span className="mode-tab-dial" aria-hidden="true">{mode.dial}</span>
+          <span className="mode-tab-name">{mode.name}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* Segmented control: show every mode card at once (grid) or one at a
+   time (tabs). Manual switch — no automatic flip on resize. */
+function DisplayToggle({ value, onChange }: { value: ModesDisplay; onChange: (m: ModesDisplay) => void }) {
+  const options: { key: ModesDisplay; label: string; icon: ReactNode }[] = [
+    {
+      key: 'cards',
+      label: 'Cards',
+      icon: (
+        <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
+          <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+          <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+          <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+          <rect x="13.5" y="13.5" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        </svg>
+      ),
+    },
+    {
+      key: 'tabs',
+      label: 'Tabs',
+      icon: (
+        <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
+          <rect x="3.5" y="8.5" width="17" height="10" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M6 8.5v-2a1 1 0 0 1 1-1h5v3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M14.5 8.5V7a1 1 0 0 1 1-1H19a1 1 0 0 1 1 1v1.5" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" opacity=".55" />
+        </svg>
+      ),
+    },
+  ];
+
+  return (
+    <div className="mode-view-toggle" role="group" aria-label="Display mode">
+      {options.map(o => (
+        <button
+          key={o.key}
+          type="button"
+          aria-pressed={value === o.key}
+          className={value === o.key ? 'active' : ''}
+          onClick={() => onChange(o.key)}
+        >
+          {o.icon}
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function ModeCard({ mode }: { mode: CameraMode }) {
   return (
     <article className="mode-card">
@@ -120,6 +212,12 @@ function ModeCard({ mode }: { mode: CameraMode }) {
 }
 
 export default function CameraModesPage() {
+  const [activeId, setActiveId] = useState(CAMERA_MODES[0].id);
+  const active = CAMERA_MODES.find(m => m.id === activeId) ?? CAMERA_MODES[0];
+
+  const display = useSim(s => s.modesDisplay);
+  const setDisplay = useSim(s => s.setModesDisplay);
+
   return (
     <div className="page">
       {/* ---------- hero: the concept + the creative ladder ---------- */}
@@ -128,9 +226,9 @@ export default function CameraModesPage() {
         <p className="page-sub">
           The mode dial answers one question: who makes the exposure decisions — you or the meter?
           Every position is a different split of that authority, from A+ (the camera drives
-          everything) to M (you drive everything, with the meter as an advisor). Each card below
-          breaks a mode down by what you control, what the camera controls, when to reach for it,
-          and how to practise it in the Simulator. Climb the ladder one dial at a time.
+          everything) to M (you drive everything, with the meter as an advisor). Each mode below
+          breaks down what you control, what the camera controls, when to reach for it, and how
+          to practise it in the Simulator. Climb the ladder one dial at a time.
         </p>
         <div className="mode-ladder">
           {CREATIVE_LADDER.map(step => (
@@ -149,10 +247,28 @@ export default function CameraModesPage() {
 
       {/* ---------- the main modes ---------- */}
       <section className="mode-section">
-        <h3 className="mode-section-title">The creative core · who turns which dial</h3>
-        <div className="mode-grid">
-          {CAMERA_MODES.map(mode => <ModeCard key={mode.id} mode={mode} />)}
+        <div className="mode-section-head">
+          <h3 className="mode-section-title">The creative core · who turns which dial</h3>
+          <DisplayToggle value={display} onChange={setDisplay} />
         </div>
+
+        {display === 'tabs' ? (
+          <div className="mode-tabs">
+            <ModeTabs activeId={active.id} onSelect={setActiveId} />
+            <div
+              className="mode-tabpanel"
+              role="tabpanel"
+              id="mode-panel"
+              aria-labelledby={`mode-tab-${active.id}`}
+            >
+              <ModeCard key={active.id} mode={active} />
+            </div>
+          </div>
+        ) : (
+          <div className="mode-grid">
+            {CAMERA_MODES.map(mode => <ModeCard key={mode.id} mode={mode} />)}
+          </div>
+        )}
       </section>
 
       {/* ---------- SCN scene modes ---------- */}

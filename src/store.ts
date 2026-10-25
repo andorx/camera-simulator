@@ -6,9 +6,17 @@
    ===================================================================== */
 
 import { create } from 'zustand';
-import type { BackgroundKey, Shot, SubjectKey, ThemeKey, ViewKey } from './types';
+import type { BackgroundKey, ModesDisplay, Shot, SubjectKey, ThemeKey, ViewKey } from './types';
 import { SUBJECT_DEFS } from './scenes/registry';
 import { distToSlider } from './optics';
+
+/* Small screens (matches the 640px breakpoint in modes.css) start in the
+   tabbed view; larger screens start with the card grid. The user can
+   switch freely from there — this is only the initial default. */
+const DEFAULT_MODES_DISPLAY: ModesDisplay =
+  typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches
+    ? 'tabs'
+    : 'cards';
 
 export interface Preset {
   theme: ThemeKey;
@@ -31,6 +39,9 @@ export interface SimState {
   /* active top-level view (tab) */
   view: ViewKey;
 
+  /* Camera Modes page: card grid vs tabbed display */
+  modesDisplay: ModesDisplay;
+
   /* dial targets (indices into APS/ISOS/SHUTTERS where applicable) */
   focal: number;
   ap: number;
@@ -49,6 +60,7 @@ export interface SimState {
 
   /* actions */
   setView: (v: ViewKey) => void;
+  setModesDisplay: (m: ModesDisplay) => void;
   setFocal: (v: number) => void;
   setAp: (v: number) => void;
   setIso: (v: number) => void;
@@ -67,6 +79,7 @@ export interface SimState {
 
 export const useSim = create<SimState>()((set) => ({
   view: 'sim',
+  modesDisplay: DEFAULT_MODES_DISPLAY,
   focal: 50, ap: 4, iso: 0, sh: 5, dist: 3,
   theme: 'golden', grid: false, hud: true,
   subject: 'person', background: 'meadow',
@@ -75,6 +88,7 @@ export const useSim = create<SimState>()((set) => ({
   openShot: null,
 
   setView: (v) => set({ view: v }),
+  setModesDisplay: (m) => set({ modesDisplay: m }),
   setFocal: (v) => set({ focal: v }),
   setAp: (v) => set({ ap: v }),
   setIso: (v) => set({ iso: v }),

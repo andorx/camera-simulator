@@ -7,6 +7,9 @@ export type BackgroundKey = 'meadow' | 'beach' | 'city' | 'forest';
 /* Top-level navigation views. */
 export type ViewKey = 'sim' | 'modes' | 'guide';
 
+/* How the Camera Modes page shows the creative-core modes. */
+export type ModesDisplay = 'cards' | 'tabs';
+
 /** A lighting theme — every painter re-renders the whole scene from this. */
 export interface Theme {
   key: ThemeKey;
