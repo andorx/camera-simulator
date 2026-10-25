@@ -180,7 +180,8 @@ export class CameraEngine {
 
     let maxBlur = 0;
     const order = [...this.layers].sort((a, b) => {
-      const da = a.dist === 'focus' ? d : a.dist, db = b.dist === 'focus' ? d : b.dist;
+      const da = a.z ?? (a.dist === 'focus' ? d : a.dist);
+      const db = b.z ?? (b.dist === 'focus' ? d : b.dist);
       return db - da;
     });
     for (const L of order) {

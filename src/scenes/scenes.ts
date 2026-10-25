@@ -1241,29 +1241,29 @@ function paintForestFg(g: CanvasRenderingContext2D, T: Theme) {
 export const BACKGROUNDS: Record<'beach' | 'city' | 'forest', BackgroundDef> = {
   beach: {
     layers: [
-      { key: 'sea',   dist: Infinity, paint: paintBeachSea },
-      { key: 'dunes', dist: 28,       paint: paintBeachDunes },
-      { key: 'sand',  dist: 6,        paint: paintBeachSand },
-      { key: 'fg',    dist: 0.7,      paint: paintBeachFg },
+      { key: 'sea',   dist: Infinity,       paint: paintBeachSea },
+      { key: 'dunes', dist: 28,             paint: paintBeachDunes },
+      { key: 'sand',  dist: 6,  z: 20,      paint: paintBeachSand },
+      { key: 'fg',    dist: 0.7,            paint: paintBeachFg },
     ],
   },
   city: {
     layers: [
-      { key: 'skyline', dist: Infinity, paint: paintCityBackdrop },
-      { key: 'towers',  dist: 160,      paint: paintCityTowers },
-      { key: 'shops',   dist: 26,       paint: paintCityShops },
-      { key: 'street',  dist: 8,        paint: paintCityStreet },
-      { key: 'fg',      dist: 0.8,      paint: paintCityFg },
+      { key: 'skyline', dist: Infinity,     paint: paintCityBackdrop },
+      { key: 'towers',  dist: 160,          paint: paintCityTowers },
+      { key: 'shops',   dist: 26,           paint: paintCityShops },
+      { key: 'street',  dist: 8,  z: 20,    paint: paintCityStreet },
+      { key: 'fg',      dist: 0.8,          paint: paintCityFg },
     ],
   },
   forest: {
     layers: [
-      { key: 'wall',   dist: Infinity, paint: paintForestBackdrop },
-      { key: 'firfar', dist: 250,      paint: paintForestFar },
-      { key: 'firmed', dist: 45,       paint: paintForestMid },
-      { key: 'near',   dist: 8,        paint: paintForestNear },
-      { key: 'floor',  dist: 3,        paint: paintForestFloor },
-      { key: 'fg',     dist: 0.7,      paint: paintForestFg },
+      { key: 'wall',   dist: Infinity,      paint: paintForestBackdrop },
+      { key: 'firfar', dist: 250,           paint: paintForestFar },
+      { key: 'firmed', dist: 45,            paint: paintForestMid },
+      { key: 'floor',  dist: 3,   z: 20,    paint: paintForestFloor },
+      { key: 'near',   dist: 8,             paint: paintForestNear },
+      { key: 'fg',     dist: 0.7,           paint: paintForestFg },
     ],
   },
 };

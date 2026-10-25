@@ -61,6 +61,8 @@ export interface LayerDef {
   key: string;
   /** metres; Infinity for the backdrop; 'focus' = the subject plane */
   dist: number | 'focus';
+  /** optional explicit compositing order (lower draws first); defaults to sorting by dist */
+  z?: number;
   paint: Painter;
 }
 

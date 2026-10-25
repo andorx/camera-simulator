@@ -16,7 +16,7 @@ const MEADOW_LAYERS = [
   { key: 'lake',     dist: 130,               paint: paintLake },
   { key: 'meadowF',  dist: 60,                paint: paintMeadowFar },
   { key: 'house',    dist: 30,                paint: paintHouseTrees },
-  { key: 'meadowN',  dist: 5,                 paint: paintMeadowNear },
+  { key: 'meadowN',  dist: 5,  z: 20,         paint: paintMeadowNear },
   { key: 'fg',       dist: 0.7,               paint: paintForeground },
 ];
 
