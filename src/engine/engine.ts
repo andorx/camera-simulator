@@ -348,7 +348,7 @@ export class CameraEngine {
   private targetCenter() {
     const S = useSim.getState();
     const { h, baseY } = subjectGeometry(SUBJECT_DEFS[S.subject].h, this.cur.d);
-    return { cx: 800, cy: Math.max(150, Math.min(860, baseY - h * 0.7)) };
+    return { cx: 800, cy: Math.max(150, Math.min(980, baseY - h * 0.7)) };
   }
 
   private tick = (now: number) => {

@@ -7,18 +7,12 @@
 
 import type { BackgroundDef, SubjectDef, Theme, ThemeKey } from '../types';
 import {
-  HORIZON, DH, CAM_H, PX_PER_DEG, paintSky,
-  sr, ell, poly, softBlob, deg,
+  HORIZON, DH, paintSky, subjectGeometry,
+  sr, ell, poly, softBlob,
 } from './scene';
 
+export { subjectGeometry };
 export const SUN_X = 1180, SUN_Y = 268;
-
-/** Screen geometry for a subject `hM` metres tall at distance `d` m. */
-export function subjectGeometry(hM: number, d: number) {
-  const h = deg(2 * Math.atan(hM / 2 / d)) * PX_PER_DEG;
-  const baseY = HORIZON + deg(Math.atan(CAM_H / d)) * PX_PER_DEG;
-  return { h, baseY };
-}
 
 /* ========================== SUBJECTS ================================ */
 
@@ -284,11 +278,11 @@ function paintShiba(g: CanvasRenderingContext2D, _T: Theme, d: number) {
   g.restore();
 }
 
-/* ------------------------------ car (1.45 m) ------------------------ */
-/* Side-view vintage coupe facing left. x −215…215, y 0 roof…145.      */
+/* ------------------------------ car (1.40 m) ------------------------ */
+/* Side-view vintage coupe facing left. x −215…215, y 20 roof…143.     */
 function paintCar(g: CanvasRenderingContext2D, T: Theme, d: number) {
-  const { h, baseY } = subjectGeometry(1.45, d);
-  const u = h / 145;
+  const { h, baseY } = subjectGeometry(1.4, d);
+  const u = h / 132;
   g.save(); g.translate(800, baseY); g.scale(u, u); g.translate(0, -145);
   const night = T.key === 'night';
   const RED = '#c94f43', RED_D = '#a53a30', CREAM = '#f2e8d5', CHROME = '#cdd3da';
@@ -395,10 +389,10 @@ function paintCar(g: CanvasRenderingContext2D, T: Theme, d: number) {
   g.restore();
 }
 
-/* ----------------------------- flower (1.1 m) ----------------------- */
+/* ----------------------------- flower (0.65 m) ---------------------- */
 /* Sunflower in a terracotta pot. y 0 bloom top…110 ground.            */
 function paintFlower(g: CanvasRenderingContext2D, _T: Theme, d: number) {
-  const { h, baseY } = subjectGeometry(1.1, d);
+  const { h, baseY } = subjectGeometry(0.65, d);
   const u = h / 110;
   g.save(); g.translate(800, baseY); g.scale(u, u); g.translate(0, -110);
 
@@ -474,8 +468,8 @@ function paintFlower(g: CanvasRenderingContext2D, _T: Theme, d: number) {
 
 export const SUBJECTS: Record<'dog' | 'car' | 'flower', SubjectDef> = {
   dog:    { h: 0.6,  minDist: 1,   paint: paintShiba },
-  car:    { h: 1.45, minDist: 4, suggestDist: 7, paint: paintCar },
-  flower: { h: 1.1,  minDist: 1.2, paint: paintFlower },
+  car:    { h: 1.4,  minDist: 2.5, suggestDist: 5, paint: paintCar },
+  flower: { h: 0.65, minDist: 0.8, paint: paintFlower },
 };
 
 /* ========================== PLACES ================================== */
@@ -1489,7 +1483,7 @@ function paintCityShops(g: CanvasRenderingContext2D, T: Theme) {
 function paintCityStreet(g: CanvasRenderingContext2D, T: Theme) {
   const P = cityPal[T.key];
   const vp = HORIZON + 8;               // vanishing y
-  const halfAt = (y: number) => 14 + (y - vp) * (260 - 14) / (1900 - vp);
+  const halfAt = (y: number) => 26 + (y - vp) * (520 - 26) / (1900 - vp);
   // ground plane: sidewalks fill everything below the shop line
   g.fillStyle = P.walk;
   g.fillRect(-800, 526, 3600, DH + 900 - 526 + 400);
@@ -1552,10 +1546,10 @@ function paintCityStreet(g: CanvasRenderingContext2D, T: Theme) {
   // perspective zebra crosswalk
   g.fillStyle = P.roadLine;
   for (let i = -3; i <= 3; i++) {
-    const cx0 = 800 + i * 24, cx1 = 800 + i * 27;
+    const cx0 = 800 + i * 32, cx1 = 800 + i * 36;
     poly(g, [
-      [cx0 - 6, 696], [cx0 + 6, 696],
-      [cx1 + 7.5, 750], [cx1 - 7.5, 750],
+      [cx0 - 8, 696], [cx0 + 8, 696],
+      [cx1 + 10, 750], [cx1 - 10, 750],
     ], P.roadLine);
   }
 
@@ -1593,7 +1587,7 @@ function paintCityFg(g: CanvasRenderingContext2D, T: Theme) {
   const P = cityPal[T.key];
 
   // detailed cast-iron fire hydrant, bottom-left
-  g.save(); g.translate(250, 1060);
+  g.save(); g.translate(230, 1085); g.scale(1.35, 1.35);
   ell(g, 4, 8, 34, 8, 'rgba(0,0,0,.34)');
   // base flange
   g.fillStyle = '#5c1912';
@@ -1626,7 +1620,7 @@ function paintCityFg(g: CanvasRenderingContext2D, T: Theme) {
   g.restore();
 
   // vintage coin parking meter, right
-  g.save(); g.translate(1380, 1075);
+  g.save(); g.translate(1400, 1095); g.scale(1.35, 1.35);
   ell(g, 0, 6, 24, 6.5, 'rgba(0,0,0,.32)');
   // post & collar
   g.fillStyle = '#262b34'; g.fillRect(-4.5, -148, 9, 152);

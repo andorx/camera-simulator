@@ -10,7 +10,7 @@ import type { Theme, ThemeKey } from '../types';
 
 export const DW = 1600, DH = 1067;
 export const HORIZON = 460;
-export const CAM_H = 1.1;              // camera height above ground, metres
+export const CAM_H = 1.15;             // camera height above ground, metres
 export const PX_PER_DEG = (DH / 2) / (Math.atan(24 / 70) * 180 / Math.PI); // 35 mm vertical half-FOV
 
 export const deg = (r: number) => (r * 180) / Math.PI;
@@ -26,11 +26,17 @@ export function sr(seed: number) {
   };
 }
 
+/** Screen geometry for a subject `hM` metres tall at distance `d` m. */
+export function subjectGeometry(hM: number, d: number) {
+  const pxPerM = 920 / (d + 1.8);
+  const h = hM * pxPerM;
+  const baseY = 665 + CAM_H * pxPerM;
+  return { h, baseY };
+}
+
 /** Where a 1.75 m person at distance `d` (metres) sits in design space. */
 export function personGeom(d: number) {
-  const h = deg(2 * Math.atan(0.875 / d)) * PX_PER_DEG;          // px tall
-  const baseY = HORIZON + deg(Math.atan(CAM_H / d)) * PX_PER_DEG; // feet y
-  return { h, baseY };
+  return subjectGeometry(1.75, d);
 }
 
 /* ------------------------------ themes ------------------------------ */
@@ -965,7 +971,7 @@ export function paintMeadowNear(g: CanvasRenderingContext2D, T: Theme) {
   }
 
   // ornate wrought-iron path lamppost (glows warmly at night)
-  g.save(); g.translate(985, 980);
+  g.save(); g.translate(895, 785);
   ell(g, 0, 6, 36, 8, 'rgba(0,0,0,.24)');
   if (T.lamp) {
     ell(g, 0, 8, 85, 18, 'rgba(255,185,80,.14)');
@@ -1002,11 +1008,11 @@ export function paintMeadowNear(g: CanvasRenderingContext2D, T: Theme) {
 /* A 1.75 m person, drawn 1 unit = 1 cm, feet at personGeom(d).baseY.   */
 export function paintSubject(g: CanvasRenderingContext2D, _T: Theme, d: number) {
   const { h, baseY } = personGeom(d);
-  const u = h / 175;
+  const u = h / 145;
   g.save();
   g.translate(800, baseY);
   g.scale(u, u);
-  g.translate(0, -175); // y: 0 = top of head … 175 = feet
+  g.translate(0, -175); // y: 34 = top of hair … 175 = feet (141 cm span)
 
   const SKIN = '#efc49d', SKIN_SH = 'rgba(160,105,70,.35)';
   const HAIR = '#3a2b21', JEANS = '#3f5878', SHOE = '#33363d';
