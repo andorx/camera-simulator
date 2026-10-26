@@ -27,13 +27,13 @@ export default function App() {
             {/* ======================= PREVIEW ======================= */}
             <section className="stage">
               <Viewport />
+              <ScenePicker />
+              <ThemePresets />
               <FilmStrip />
             </section>
 
             {/* ======================= CONTROLS ======================= */}
             <aside className="panel">
-              <ScenePicker />
-              <ThemePresets />
               <ExpoMeter />
               <ControlsCard />
               <ShotIntelligence />

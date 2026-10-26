@@ -8,7 +8,7 @@ export default function ScenePicker() {
   const setBackground = useSim(s => s.setBackground);
 
   return (
-    <div className="card">
+    <div className="card scene-card">
       <div className="scene-row">
         <span className="scene-label">Subject</span>
         <div className="seg seg-4" id="subjectSeg">

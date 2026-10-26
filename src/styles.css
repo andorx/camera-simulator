@@ -166,6 +166,9 @@ body {
 }
 .capture-flash.on { transition: none; opacity: .85; }
 
+/* ---------- scene picker (below the preview, above the film strip) ---------- */
+.scene-card { margin-top: 14px; }
+
 /* ---------- film strip ---------- */
 .filmstrip-card { margin-top: 14px; }
 .filmstrip-head { display: flex; justify-content: space-between; align-items: center; }
