@@ -66,11 +66,12 @@ export default function Explainers() {
         </article>
         <article className="card">
           <h4>🎬 Shutter &amp; distance</h4>
-          <p>Shutter speed trades light for freeze — slower than 1/focal (mm) and handheld shake smears the frame. Subject distance moves the focus plane: everything except the subject re-blurs around it.</p>
+          <p>Shutter speed must win two races: stop the subject's own motion, and beat handheld shake (keep it ≥ 1/focal mm). Subject distance moves the focus plane: everything except the subject re-blurs around it.</p>
           <div className="impact">
             <div className="impact-cap">slow down · 1/8000 → 2″</div>
             <ImpactRow k="lightT" name="Light gathered" dir="up" title="Rises as the shutter slows" ladders={ladders} />
             <ImpactRow k="freeze" name="Freeze power" dir="dn" title="Falls as the shutter slows" ladders={ladders} />
+            <ImpactRow k="motion" name="Subject smear" dir="up" title="Rises as the shutter slows" ladders={ladders} />
             <ImpactRow k="shake" name="Shake smear" dir="up" title="Rises as the shutter slows" ladders={ladders} />
             <div className="impact-cap gap">walk back · 0.5 → 15 m</div>
             <ImpactRow k="subjsize" name="Subject size" dir="dn" title="Falls as the subject walks away" ladders={ladders} />

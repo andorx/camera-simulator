@@ -11,7 +11,7 @@ import { ALL_BACKGROUNDS, SUBJECT_DEFS } from '../scenes/registry';
 import { subjectGeometry } from '../scenes/scenes';
 import {
   W, H, APS, ISOS, SHUTTERS, GRAIN_ALPHA,
-  fovScale, blurPx, brightness, shakePx,
+  fovScale, blurPx, motionBlurPx, brightness, shakePx,
 } from '../optics';
 import { useSim } from '../store';
 import { useLive } from '../live';
@@ -172,11 +172,15 @@ export class CameraEngine {
     const ctx = this.ctx!;
     const S = useSim.getState();
     const T = THEMES[S.theme];
-    const { f, N, d, s, cx, cy } = this.cur;
+    const { f, N, d, s, cx, cy, t } = this.cur;
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none';
     ctx.clearRect(0, 0, W, H);
+
+    // subject-motion smear for this frame (only moving subjects smear)
+    const v = SUBJECT_DEFS[S.subject].v ?? 0;
+    const mpx = v > 0 ? motionBlurPx(v, t, d, f) : 0;
 
     let maxBlur = 0;
     const order = [...this.layers].sort((a, b) => {
@@ -191,7 +195,17 @@ export class CameraEngine {
       const k = s / L.drawn.s;
       const dx = (L.drawn.cx - W / (2 * L.drawn.s) - cx) * s + W / 2;
       const dy = (L.drawn.cy - H / (2 * L.drawn.s) - cy) * s + H / 2;
-      this.drawWithBlur(ctx, L.cv, dx, dy, W * k, H * k, bpx);
+      if (L.key === 'subject' && mpx >= 0.8) {
+        // the subject crossed the frame while the shutter was open
+        const passes: [number, number][] = [[0, .5], [.42, .25], [.8, .14], [1.25, .11]];
+        for (const [off, a] of passes) {
+          ctx.globalAlpha = a;
+          this.drawWithBlur(ctx, L.cv, dx - mpx * off, dy, W * k, H * k, bpx);
+        }
+        ctx.globalAlpha = 1;
+      } else {
+        this.drawWithBlur(ctx, L.cv, dx, dy, W * k, H * k, bpx);
+      }
     }
 
     const copyToScratch = () => {
@@ -231,32 +245,35 @@ export class CameraEngine {
       ctx.filter = 'none';
     }
 
-    // film grade for the scene
+    // film grade for the scene — high ISO mutes colour & contrast, matching
+    // the "Colour & contrast" impact ladder
+    const isoStop = Math.log2(Math.max(100, Math.min(25600, this.cur.iso)) / 100);
+    const noiseLvl = GRAIN_ALPHA[Math.max(0, Math.min(8, Math.round(isoStop)))] / GRAIN_ALPHA[8];
+    const sat = T.sat * (0.55 + 0.45 * (1 - noiseLvl));
+    const con = T.contrast * (0.92 + 0.08 * (1 - noiseLvl));
     copyToScratch();
-    ctx.filter = `saturate(${T.sat}) contrast(${T.contrast})`;
+    ctx.filter = `saturate(${sat.toFixed(3)}) contrast(${con.toFixed(3)})`;
     ctx.drawImage(this.scv, 0, 0);
     ctx.filter = 'none';
 
-    // exposure
+    // exposure — true gain: out = in × B per stop (gamma-corrected), so
+    // highlights clip hard against 255 and shadows crush toward black,
+    // exactly like a linear sensor with a hard ceiling.
     const B = brightness(this.cur.iso, this.cur.t, N, T.E);
-    if (B > 1) {
-      ctx.fillStyle = '#fff';
-      ctx.globalAlpha = Math.min(0.96, 1 - Math.pow(B, -0.55));
-      ctx.fillRect(0, 0, W, H);
-      ctx.globalAlpha = 1;
-      if (B > 1.6) {  // highlight bloom
-        copyToScratch();
-        ctx.globalCompositeOperation = 'screen';
-        ctx.globalAlpha = Math.min(0.6, (B - 1.6) * 0.18);
-        ctx.filter = `blur(16px) brightness(${Math.min(2.6, B / 3)})`;
-        ctx.drawImage(this.scv, 0, 0);
-        ctx.filter = 'none'; ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
-      }
-    } else if (B < 0.98) {
-      ctx.fillStyle = '#000';
-      ctx.globalAlpha = Math.min(0.965, 1 - Math.pow(B, 0.42));
-      ctx.fillRect(0, 0, W, H);
-      ctx.globalAlpha = 1;
+    const gain = Math.pow(Math.max(B, 1e-4), 1 / 2.2);
+    if (Math.abs(gain - 1) >= 0.004) {
+      copyToScratch();
+      ctx.filter = `brightness(${gain.toFixed(4)})`;
+      ctx.drawImage(this.scv, 0, 0);
+      ctx.filter = 'none';
+    }
+    if (B > 1.6) {  // highlight bloom
+      copyToScratch();
+      ctx.globalCompositeOperation = 'screen';
+      ctx.globalAlpha = Math.min(0.6, (B - 1.6) * 0.18);
+      ctx.filter = `blur(16px) brightness(${Math.min(2.6, B / 3)})`;
+      ctx.drawImage(this.scv, 0, 0);
+      ctx.filter = 'none'; ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
     }
 
     // vignette — widest apertures breathe light onto the corners

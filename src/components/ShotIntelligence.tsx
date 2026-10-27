@@ -14,6 +14,7 @@ export default function ShotIntelligence() {
         <div><dt>Hyperfocal</dt><dd id="stHyperf">{stats.hyperfocal}</dd></div>
         <div><dt>Background blur @∞</dt><dd id="stBlur">{stats.blur}</dd></div>
         <div><dt>Camera shake</dt><dd id="stShake">{stats.shake}</dd></div>
+        <div><dt>Subject motion</dt><dd id="stMotion">{stats.motion}</dd></div>
       </dl>
       {tips.length > 0 && (
         <ul className="tips" id="tips">

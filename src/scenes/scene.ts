@@ -26,9 +26,12 @@ export function sr(seed: number) {
   };
 }
 
+/** Rendered design-space scale for a subject at distance `d` m (px per metre). */
+export const designPxPerM = (d: number) => 920 / (d + 1.8);
+
 /** Screen geometry for a subject `hM` metres tall at distance `d` m. */
 export function subjectGeometry(hM: number, d: number) {
-  const pxPerM = 920 / (d + 1.8);
+  const pxPerM = designPxPerM(d);
   const h = hM * pxPerM;
   const baseY = 665 + CAM_H * pxPerM;
   return { h, baseY };

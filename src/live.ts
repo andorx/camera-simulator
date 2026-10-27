@@ -22,6 +22,7 @@ export interface LiveStats {
   hyperfocal: string;
   blur: string;
   shake: string;
+  motion: string;
 }
 
 export interface LiveFrame {
@@ -63,6 +64,7 @@ export const useLive = create<LiveState>()((set) => ({
       hyperfocal: '14.9 m',
       blur: 'subtle · 1 px',
       shake: 'none',
+      motion: 'frozen',
     },
     ladders: {},
     af: { inside: true, left: 46, top: 30, w: 8, h: 12 },

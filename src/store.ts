@@ -30,7 +30,7 @@ export interface Preset {
 
 export const PRESETS: Record<string, Preset & { label: string }> = {
   classic:   { label: 'Classic',     theme: 'golden', focal: 50, ap: 4, iso: 0, sh: 5, dist: 3 },
-  portrait:  { label: 'Portrait',    theme: 'golden', focal: 85, ap: 1, iso: 0, sh: 1, dist: 2.5 },
+  portrait:  { label: 'Portrait',    theme: 'golden', focal: 85, ap: 1, iso: 0, sh: 2, dist: 2.5 },
   landscape: { label: 'Landscape',   theme: 'golden', focal: 24, ap: 6, iso: 0, sh: 7, dist: 12 },
   night:     { label: 'Night street', theme: 'night', focal: 35, ap: 0, iso: 6, sh: 7, dist: 3, background: 'city' },
 };

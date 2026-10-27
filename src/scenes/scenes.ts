@@ -467,9 +467,9 @@ function paintFlower(g: CanvasRenderingContext2D, _T: Theme, d: number) {
 }
 
 export const SUBJECTS: Record<'dog' | 'car' | 'flower', SubjectDef> = {
-  dog:    { h: 0.6,  minDist: 1,   paint: paintShiba },
-  car:    { h: 1.4,  minDist: 2.5, suggestDist: 5, paint: paintCar },
-  flower: { h: 0.65, minDist: 0.8, paint: paintFlower },
+  dog:    { h: 0.6,  v: 3.5, minDist: 1,   paint: paintShiba },
+  car:    { h: 1.4,  v: 8,   minDist: 2.5, suggestDist: 5, paint: paintCar },
+  flower: { h: 0.65, v: 0.15, minDist: 0.8, paint: paintFlower },
 };
 
 /* ========================== PLACES ================================== */

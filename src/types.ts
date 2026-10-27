@@ -69,6 +69,12 @@ export interface LayerDef {
 export interface SubjectDef {
   /** subject height, metres */
   h: number;
+  /**
+   * Typical perpendicular speed, m/s — drives subject-motion blur at slow
+   * shutters (person walking ≈ 1.4, trotting dog ≈ 3.5, city car ≈ 8,
+   * wind-blown flower ≈ 0.15; 0 = static).
+   */
+  v?: number;
   minDist?: number;
   /** when switching to this subject closer than minDist, jump here */
   suggestDist?: number;

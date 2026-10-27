@@ -26,7 +26,7 @@ export const ALL_BACKGROUNDS: Record<BackgroundKey, BackgroundDef> = {
 };
 
 export const SUBJECT_DEFS: Record<SubjectKey, SubjectDef> = {
-  person: { h: 1.75, paint: paintSubject },
+  person: { h: 1.75, v: 1.4, paint: paintSubject },
   ...SUBJECTS,
 };
 

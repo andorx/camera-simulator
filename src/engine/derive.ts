@@ -12,7 +12,7 @@ import { SUBJECT_DEFS } from '../scenes/registry';
 import { subjectGeometry } from '../scenes/scenes';
 import {
   SHUTTERS, GRAIN_ALPHA, W, H,
-  blurPx, dof, hFov, vFov, shakePx, brightness, fmtM,
+  blurPx, motionBlurPx, dof, hFov, vFov, shakePx, brightness, fmtM,
 } from '../optics';
 import type { SimState } from '../store';
 
@@ -45,6 +45,8 @@ export function deriveFrame(cur: Cur, st: SimState): LiveFrame {
   const bgPx = blurPx(Infinity, cur.f, cur.N, cur.d);
   const blurTag = bgPx < 2.5 ? 'subtle' : bgPx < 9 ? 'moderate' : bgPx < 28 ? 'strong' : 'creamy';
   const sh = shakePx(cur.t, cur.f);
+  const v = SUBJECT_DEFS[st.subject].v ?? 0;
+  const moPx = v > 0 ? motionBlurPx(v, cur.t, cur.d, cur.f) : 0;
 
   /* ---- explainer impact ladders ---- */
   const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
@@ -74,7 +76,10 @@ export function deriveFrame(cur: Cur, st: SimState): LiveFrame {
     colour: clamp01(1 - noiseLvl),
     // shutter (t spans 1/8000 → 2 s ≈ 14 stops)
     lightT: clamp01(shStop / 14),
-    freeze: clamp01(1 - shStop / 14),
+    // freeze power: how sharp the moving subject actually renders now
+    // (blur = v·t through the rendered scale — not just a shutter log scale)
+    freeze: clamp01(1 - moPx / 10),
+    motion: clamp01(moPx / 12),
     // subject distance — on-screen size of the subject
     subjsize: clamp01((Math.log(subjH * cur.s) - Math.log(24)) / (Math.log(1400) - Math.log(24))),
   };
@@ -103,6 +108,7 @@ export function deriveFrame(cur: Cur, st: SimState): LiveFrame {
       hyperfocal: fmtM(hyperfocal),
       blur: `${blurTag} · ${bgPx.toFixed(0)} px`,
       shake: sh < 0.8 ? 'none' : `≈${sh.toFixed(0)} px smear`,
+      motion: v === 0 ? 'static subject' : moPx < 0.8 ? 'frozen' : `≈${moPx.toFixed(0)} px smear`,
     },
     ladders,
     af: {
@@ -123,6 +129,8 @@ export function deriveTips(cur: Cur, st: SimState): string[] {
   const { near, far } = dof(cur.f, cur.N, cur.d);
   const total = far - near;
   const sh = shakePx(cur.t, cur.f);
+  const v = SUBJECT_DEFS[st.subject].v ?? 0;
+  const moPx = v > 0 ? motionBlurPx(v, cur.t, cur.d, cur.f) : 0;
 
   if (stops > 2) {
     const need = SHUTTERS.find(s => s.s >= cur.t / B) || SHUTTERS[SHUTTERS.length - 1];
@@ -130,6 +138,15 @@ export function deriveTips(cur: Cur, st: SimState): string[] {
   } else if (stops < -2) {
     const need = SHUTTERS.find(s => s.s >= cur.t / B) || SHUTTERS[SHUTTERS.length - 1];
     tips.push(`Underexposed ${stops.toFixed(1)} EV — try ${need.l} s, higher ISO or open the aperture.`);
+  }
+  if (moPx >= 2.5) {
+    // fastest standard shutter that keeps the subject under ~1.2 px of smear
+    const tNeed = (cur.t * 1.2) / moPx;
+    let needS = SHUTTERS[0];
+    for (let i = SHUTTERS.length - 1; i >= 0; i--) {
+      if (SHUTTERS[i].s <= tNeed) { needS = SHUTTERS[i]; break; }
+    }
+    tips.push(`The ${st.subject} is moving — ≈${moPx.toFixed(0)} px smear at ${SHUTTERS[st.sh].l} s; use ${needS.l} s or faster to freeze it (or pan along).`);
   }
   if (isFinite(total) && total < 0.3 && cur.f >= 50)
     tips.push(`Razor-thin depth of field (${(total * 100).toFixed(0)} cm) — focus lands on the eyes or misses.`);

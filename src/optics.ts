@@ -2,7 +2,7 @@
    optics.ts — pure optics math and dial constants (no state inside).
    ===================================================================== */
 
-import { DW, DH } from './scenes/scene';
+import { DW, DH, designPxPerM } from './scenes/scene';
 
 export const W = DW, H = DH;                 // preview pixels
 export const SENSOR_W = 36, SENSOR_H = 24;   // mm, full-frame
@@ -55,6 +55,16 @@ export const brightness = (iso: number, t: number, N: number, E: number) =>
 
 export const shakePx = (t: number, f: number) =>
   Math.min(15, Math.max(0, 1.35 * t * f - 1.1));
+
+/**
+ * Subject-motion smear, preview px. A subject crossing the frame at v m/s
+ * (perpendicular to the axis) sweeps v·t metres during the exposure; through
+ * the same rendered scale the subject itself is drawn at (designPxPerM ×
+ * fovScale) that becomes a smear of v·t·px/m px. Blur relative to the
+ * subject's own height is therefore physically exact: (v·t)/h.
+ */
+export const motionBlurPx = (v: number, t: number, d: number, f: number) =>
+  v * t * designPxPerM(d) * fovScale(f);
 
 export function fmtM(v: number) {
   if (!isFinite(v)) return '∞';
